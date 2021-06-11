@@ -14,6 +14,7 @@ struct Card: Identifiable {
     var symbolsFilling: CardSymbolFilling
     var symbolsCount: SymbolsCount
     var isChosen = false
+    var isHinted = false
     
     enum CardColor: CaseIterable {
         case red, green, blue

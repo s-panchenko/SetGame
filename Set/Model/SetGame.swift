@@ -42,7 +42,7 @@ struct SetGame {
     mutating func addCards() {
         let cardsCount = cards.count
         if cardsDeck.mayAddCards {
-            cardsDeck.cardsInDeck = cardsDeck.cardsInDeck + Array(cards[..<cardsDeck.numberOfCardsInRow])
+            cardsDeck.cardsInDeck = cardsDeck.cardsInDeck + Array(cards[..<(cardsDeck.numberOfCardsInRow)])
             cards.removeSubrange(..<cardsDeck.numberOfCardsInRow)
             guard cards.count == cardsCount - cardsDeck.numberOfCardsInRow else {
                 fatalError("Incorrect number of cards after game started: \(cards.count)")
@@ -62,5 +62,9 @@ struct SetGame {
                 addCards()
             }
         }
+    }
+    
+    mutating func hintSet() {
+        cardsDeck.hintSet()
     }
 }

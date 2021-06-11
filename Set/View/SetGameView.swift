@@ -18,7 +18,9 @@ struct SetGameView: View {
                 onCardTap: { card in viewModel.choose(card: card) }
             )
             HStack {
-                gameControlButton(title: "Hints: ") {  }
+                gameControlButton(title: "Hints: ") {
+                    viewModel.hintSet()
+                }
                 Spacer()
                 gameControlButton(title: "Deal+3", disabled: viewModel.isAddingCardsNotAllowed) {
                     viewModel.addCards()

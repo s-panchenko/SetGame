@@ -34,4 +34,8 @@ class SetGameViewModel: ObservableObject {
     func choose(card: Card) {
         model.choose(card: card)
     }
+    
+    func hintSet() {
+        model.hintSet()
+    }
 }

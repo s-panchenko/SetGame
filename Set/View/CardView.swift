@@ -26,7 +26,7 @@ struct CardView: View {
         .foregroundColor(self.color)
         .background(Color.white)
         .cornerRadius(CardDrawing.cardCornerRadius)
-        .overlay(CardDrawing.cardOverlay(isChosen: card.isChosen))
+        .overlay(CardDrawing.cardOverlay(isChosen: card.isChosen, isHinted: card.isHinted))
         .onTapGesture { onTap(card) }
     }
     
@@ -36,11 +36,13 @@ struct CardView: View {
         static let cardSymbolHeightScaleFactor: CGFloat = 0.65
         static let cardMaxSymbolsCount = CGFloat(Card.SymbolsCount.three.rawValue)
         
-        static func cardOverlay(isChosen: Bool) -> some View {
-            isChosen ?
+        static func cardOverlay(isChosen: Bool, isHinted: Bool) -> some View {
+            let shouldBeStroked = isChosen || isHinted
+            let color: Color = isChosen ? .orange : .green
+            return shouldBeStroked ?
                 RoundedRectangle(cornerRadius: cardCornerRadius)
-                .stroke(Color.orange, lineWidth: cardBorderWidth)
-                : nil
+                .stroke(color, lineWidth: cardBorderWidth) :
+                nil
         }
         
         static func cardSymbolHeight(cardHeight: CGFloat) -> CGFloat {

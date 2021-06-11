@@ -15,13 +15,12 @@ struct CardsDeck {
     let numberOfCardsThatShouldBeMatched = 3
     
     var mayAddCards: Bool {
-        !cardsInDeck.isEmpty && cardsInDeck.count < maxNumberOfCardsInDeck
+        !cardsInDeck.isEmpty && cardsInDeck.count < maxNumberOfCardsInDeck // add check if there are available cards in 81-deck
     }
     
     var tooFewCards: Bool {
         cardsInDeck.count < startingNumberOfCardsInDeck
     }
-    
     
     var cardsThatShouldBeMatched: [Card]? {
         let chosenCards = cardsInDeck.filter { $0.isChosen }
@@ -47,6 +46,23 @@ struct CardsDeck {
     mutating func removeFromDeck(cards: [Card]) {
         cardsInDeck.removeAll { cardFromDeck in
             cards.map { $0.id }.contains(cardFromDeck.id)
+        }
+    }
+    
+    mutating func hintSet() {
+        outerLoop: for first in 0..<cardsInDeck.count-2 {
+            for second in (first+1)..<cardsInDeck.count-1 {
+                for third in (second+1)..<cardsInDeck.count {
+                    let possibleSet = [cardsInDeck[first], cardsInDeck[second], cardsInDeck[third]]
+                    if possibleSet.allSetMatched {
+                        possibleSet.map { $0.id }.forEach { id in
+                            let id = cardsInDeck.firstIndex { card in card.id == id }!
+                            cardsInDeck[id].isHinted = true
+                        }
+                        break outerLoop
+                    }
+                }
+            }
         }
     }
 }
