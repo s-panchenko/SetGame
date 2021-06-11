@@ -51,21 +51,9 @@ struct CardsDeck {
     }
 }
 
-struct SetOfCards {
-    let numberOfCardsInSet = 3
-    var cards: (first: Card, second: Card, third: Card)
-    
-    init(cards: [Card]) {
-        guard cards.count == numberOfCardsInSet else {
-            fatalError("Incorrect number of cards for set: \(cards.count)")
-        }
-        self.cards = (cards[0], cards[1], cards[2])
-    }
-}
-
 extension Array where Element == Card {
     var allSetMatched: Bool {
-        let (first, second, third) = SetOfCards(cards: self).cards
+        let (first, second, third) = (self[0], self[1], self[2])
         return (first.isMatched(with: second) == first.isMatched(with: third)) &&
             (first.isMatched(with: second) == second.isMatched(with: third))
     }
