@@ -44,7 +44,7 @@ extension Card: Matchable {
         )
     }
     
-    struct CardsMatchResult {
+    struct CardsMatchResult: Equatable {
         var colorMatched: Bool
         var symbolMatched: Bool
         var symbolFillingMatched: Bool

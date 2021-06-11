@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct CardView: View {
-    @State var card: Card
+    var card: Card
+    var onTap: (Card) -> Void
     
     var body: some View {
         GeometryReader { geometry in
@@ -26,9 +27,7 @@ struct CardView: View {
         .background(Color.white)
         .cornerRadius(CardDrawing.cardCornerRadius)
         .overlay(CardDrawing.cardOverlay(isChosen: card.isChosen))
-        .onTapGesture {
-            card.isChosen.toggle()
-        }
+        .onTapGesture { onTap(card) }
     }
     
     struct CardDrawing {
@@ -92,6 +91,6 @@ extension CardView {
 struct CardView_Previews: PreviewProvider {
     static var previews: some View {
         let card = Card(color: .green, symbol: .squiggle, symbolsFilling: .stripped, symbolsCount: .three)
-        return CardView(card: card)
+        return CardView(card: card) { _ in }
     }
 }

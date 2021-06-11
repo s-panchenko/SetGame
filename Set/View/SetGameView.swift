@@ -12,9 +12,10 @@ struct SetGameView: View {
     
     var body: some View {
         VStack {
-            CardsDeskView(
+            CardsDeckView(
                 cards: viewModel.cards,
-                columnsCount: viewModel.numberOfCardsInRow
+                columnsCount: viewModel.numberOfCardsInRow,
+                onCardTap: { card in viewModel.choose(card: card) }
             )
             HStack {
                 gameControlButton(title: "Hints: ") {  }

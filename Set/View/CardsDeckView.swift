@@ -7,9 +7,10 @@
 
 import SwiftUI
 
-struct CardsDeskView: View {
+struct CardsDeckView: View {
     var cards: [Card]
     var columnsCount: Int
+    var onCardTap: (Card) -> Void
     private var rowsCount: Int {
         cards.count / columnsCount
     }
@@ -18,7 +19,7 @@ struct CardsDeskView: View {
         GeometryReader { geometry in
             LazyVGrid(columns: GridColumns(size: geometry.size)) {
                 ForEach(cards) { card in
-                    CardView(card: card)
+                    CardView(card: card, onTap: onCardTap) 
                         .aspectRatio(1, contentMode: .fit)
                 }
             }
@@ -41,7 +42,7 @@ struct CardsDeskView: View {
 struct CardsDesk_Previews: PreviewProvider {
     static var previews: some View {
         let cards = Array(repeating: Card(color: .blue, symbol: .diamond, symbolsFilling: .filled, symbolsCount: .two), count: 12)
-        return CardsDeskView(cards: cards, columnsCount: 3)
+        return CardsDeckView(cards: cards, columnsCount: 3) { _ in }
             .background(Color.purple.ignoresSafeArea())
     }
 }

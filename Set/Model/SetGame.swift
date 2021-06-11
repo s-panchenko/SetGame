@@ -49,4 +49,18 @@ struct SetGame {
             }
         }
     }
+    
+    mutating func choose(card: Card) {
+        cardsDeck.choose(card: card)
+        if let cardsToMatch = cardsDeck.cardsThatShouldBeMatched {
+            if cardsToMatch.allSetMatched {
+                cardsDeck.removeFromDeck(cards: cardsToMatch)
+            } else {
+                cardsDeck.unchooseAll()
+            }
+            if cardsDeck.tooFewCards {
+                addCards()
+            }
+        }
+    }
 }
