@@ -18,7 +18,9 @@ struct SetGame {
     var dealtCards: [Card] = []
     
     var mayAddCards: Bool {
-        !dealtCards.isEmpty && dealtCards.count < maxNumberOfDealtCards // add check if there are available cards in 81-deck
+        !dealtCards.isEmpty &&
+            dealtCards.count < maxNumberOfDealtCards &&
+            cards.count >= numberOfCardsInRow
     }
     
     var cardsThatShouldBeMatched: [Card]? {
@@ -86,7 +88,6 @@ struct SetGame {
                 addCards()
             }
         }
-        print("")
     }
     
     mutating func hintSet() {
