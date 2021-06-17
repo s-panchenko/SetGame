@@ -8,9 +8,28 @@
 import Foundation
 
 struct SetGame {
-    private var cards: [Card] = []
-    private(set) var cardsDeck = CardsDeck()
-    private let maxCardsCount = 81
+    let maxCardsCount = 81
+    let startingNumberOfDealtCards = 12
+    let maxNumberOfDealtCards = 18
+    let numberOfCardsInRow = 3
+    let numberOfCardsThatShouldBeMatched = 3
+    
+    var cards: [Card] = []
+    var dealtCards: [Card] = []
+    
+    var mayAddCards: Bool {
+        !dealtCards.isEmpty && dealtCards.count < maxNumberOfDealtCards // add check if there are available cards in 81-deck
+    }
+    
+    var cardsThatShouldBeMatched: [Card]? {
+        let chosenCards = dealtCards.filter { $0.isChosen }
+        let chosenCardsCount = chosenCards.count
+        guard chosenCardsCount <= numberOfCardsThatShouldBeMatched else {
+            fatalError("Incorrect number of chosen cards: \(chosenCardsCount)")
+        }
+        
+        return chosenCardsCount == numberOfCardsThatShouldBeMatched ? chosenCards : nil
+    }
     
     mutating func createCardsForGame() {
         cards = []
@@ -32,39 +51,66 @@ struct SetGame {
     
     mutating func startGame() {
         createCardsForGame()
-        cardsDeck.cardsInDeck = Array(cards[..<cardsDeck.startingNumberOfCardsInDeck])
-        cards.removeSubrange(..<cardsDeck.startingNumberOfCardsInDeck)
-        guard cards.count == maxCardsCount - cardsDeck.startingNumberOfCardsInDeck else {
+        dealtCards = Array(cards[..<startingNumberOfDealtCards])
+        cards.removeSubrange(..<startingNumberOfDealtCards)
+        guard cards.count == maxCardsCount - startingNumberOfDealtCards else {
             fatalError("Incorrect number of cards after game started: \(cards.count)")
         }
     }
     
     mutating func addCards() {
         let cardsCount = cards.count
-        if cardsDeck.mayAddCards {
-            cardsDeck.cardsInDeck = cardsDeck.cardsInDeck + Array(cards[..<(cardsDeck.numberOfCardsInRow)])
-            cards.removeSubrange(..<cardsDeck.numberOfCardsInRow)
-            guard cards.count == cardsCount - cardsDeck.numberOfCardsInRow else {
+        if mayAddCards {
+            dealtCards = dealtCards + Array(cards[..<numberOfCardsInRow])
+            cards.removeSubrange(..<numberOfCardsInRow)
+            guard cards.count == cardsCount - numberOfCardsInRow else {
                 fatalError("Incorrect number of cards after game started: \(cards.count)")
             }
         }
     }
     
     mutating func choose(card: Card) {
-        cardsDeck.choose(card: card)
-        if let cardsToMatch = cardsDeck.cardsThatShouldBeMatched {
+        let indexOfChosenCard = dealtCards.firstIndex { $0.id == card.id }!
+        dealtCards[indexOfChosenCard].isChosen.toggle()
+        if let cardsToMatch = cardsThatShouldBeMatched {
             if cardsToMatch.allSetMatched {
-                cardsDeck.removeFromDeck(cards: cardsToMatch)
+                dealtCards.removeAll { matchedCard in
+                    cardsToMatch.map { $0.id }.contains(matchedCard.id)
+                }
             } else {
-                cardsDeck.unchooseAll()
+                dealtCards.indices.forEach { index in
+                    dealtCards[index].isChosen = false
+                }
             }
-            if cardsDeck.tooFewCards {
+            if dealtCards.count < startingNumberOfDealtCards {
                 addCards()
             }
         }
+        print("")
     }
     
     mutating func hintSet() {
-        cardsDeck.hintSet()
+        outerLoop: for first in 0..<dealtCards.count-2 {
+            for second in (first+1)..<dealtCards.count-1 {
+                for third in (second+1)..<dealtCards.count {
+                    let possibleSet = [dealtCards[first], dealtCards[second], dealtCards[third]]
+                    if possibleSet.allSetMatched {
+                        possibleSet.map { $0.id }.forEach { id in
+                            let id = dealtCards.firstIndex { card in card.id == id }!
+                            dealtCards[id].isHinted = true
+                        }
+                        break outerLoop
+                    }
+                }
+            }
+        }
+    }
+}
+
+extension Array where Element == Card {
+    var allSetMatched: Bool {
+        let (first, second, third) = (self[0], self[1], self[2])
+        return (first.isMatched(with: second) == first.isMatched(with: third)) &&
+            (first.isMatched(with: second) == second.isMatched(with: third))
     }
 }
