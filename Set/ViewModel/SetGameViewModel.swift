@@ -11,16 +11,16 @@ class SetGameViewModel: ObservableObject {
     @Published private var model = SetGame()
     
     var cards: [Card] {
-        model.cardsDeck.cardsInDeck
+        model.dealtCards
     }
     
     var numberOfCardsInRow: Int {
-        model.cardsDeck.numberOfCardsInRow
+        model.numberOfCardsInRow
     }
     
     
     var isAddingCardsNotAllowed: Bool {
-        !model.cardsDeck.mayAddCards
+        !model.mayAddCards
     }
     
     func newGame() {
